@@ -9,13 +9,16 @@ function NotesService($http) {
   self.notes = [];
 
   //Get all notes from Server
-  self.fetch = function(callback) {
-    $http.get('http://localhost:3000/notes')
-    .success(function(notesData) {
-      self.notes = notesData;
-      if (callback) {
-        callback();
-      }
+  self.fetch = function() {
+    return $http.get('http://localhost:3000/notes')
+    .then(
+      //Success callback
+      function(response) {
+        self.notes = response.data;
+    },
+    // Failure callback
+    function(response) {
+      // TODO: Handle failure
     });
   };
   self.get = function() {
