@@ -1,7 +1,7 @@
 //Database
 var db = require('mongoose');
 //Database Connection String
-db.connect('mongodb://mongo:newpass#1@ds031912.mongolab.com:31912/notelydb');
+db.connect(process.env.DB_URI);
 //Database Schema Like Create Script
 
 //This is what gets returned

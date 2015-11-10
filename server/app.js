@@ -1,3 +1,4 @@
+require('dotenv').load();
 var express = require('express');
 var app = express();
 var Note = require('./models/note');
@@ -36,4 +37,5 @@ app.post('/notes', function(req, res) {
 
 app.listen(3000, function() {
   console.log('Listening on http://localhost:3000');
+  console.log(process.env.DB_URI);
 });
