@@ -31,11 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notes", "notes", "{BF621F6B
 		app\notes\notes.js = app\notes\notes.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{3C845BE9-BE11-4358-8CD3-04E8F3D1E3EA}"
-	ProjectSection(SolutionItems) = preProject
-		Test.html = Test.html
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +39,5 @@ Global
 		{67534B99-8376-46C2-A5B3-EB7BF56398D2} = {4D9611C7-4619-42D3-A06E-095BDE7D8B93}
 		{F18C73BA-EBCB-4B02-98C1-A14504C4E119} = {67534B99-8376-46C2-A5B3-EB7BF56398D2}
 		{BF621F6B-9369-4FD9-863E-CEA53E127D27} = {67534B99-8376-46C2-A5B3-EB7BF56398D2}
-		{3C845BE9-BE11-4358-8CD3-04E8F3D1E3EA} = {67534B99-8376-46C2-A5B3-EB7BF56398D2}
 	EndGlobalSection
 EndGlobal
