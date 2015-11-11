@@ -7,7 +7,10 @@
           New Note
         </button>
         <ul id="notes">
-          <li ng-repeat="note in notes">{{note.title}}<br><b>{{note.body_html}}</b></li>
+          <li ng-repeat="note in notes">
+            <a class="note" ui-sref="notes.form({noteId: note._id })">
+              {{note.title}}
+            </a>
         </ul>
       </nav>
     </div>
