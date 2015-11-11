@@ -83,7 +83,7 @@ function NotesService($http) {
   self.delete = function(note) {
     var noteDeletePromise =  $http.delete('http://localhost:3000/notes/' + note._id);
     noteDeletePromise.then(function(response) {
-      alert(response.data.message);
+      // alert(response.data.message);
       self.removeNote(note);
     });
     return noteDeletePromise;
@@ -93,9 +93,8 @@ function NotesService($http) {
     for (var i = 0; i < self.notes.length; i++) {
       if (self.notes[i]._id === note._id) {
         self.notes.splice(i, 1);
+        break;
       }
     }
-    return {};
   }
-
 }
