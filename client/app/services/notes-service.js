@@ -44,12 +44,41 @@ function NotesService($http) {
     return self.latestResult;
   };
 
-  self.save = function(note) {
-    return $http.post('http://localhost:3000/notes', {
+  self.create = function(note) {
+    var noteCreatePromise =  $http.post('http://localhost:3000/notes', {
       note: note
-    }).then(function(response) {
+    });
+
+    noteCreatePromise.then(function(response) {
       self.notes.unshift(response.data.note);
       self.latestResult = response.data.message;
     });
+
+    return noteCreatePromise;
+  }
+
+  self.update = function(note) {
+    var noteUpdatePromise =  $http.put('http://localhost:3000/notes/' + note._id, {
+      note: {
+        title: note.title,
+        body_html: note.body_html
+      }
+    });
+
+    noteUpdatePromise.then(function(response) {
+      self.replaceNote(response.data.note);
+      //self.notes.unshift(response.data.note);
+      //self.latestResult = response.data.message;
+    });
+    return noteUpdatePromise;
+  };
+
+  self.replaceNote = function(note) {
+    for (var i = 0; i < self.notes.length; i++) {
+      if (self.notes[i]._id === note._id) {
+        self.notes[i] = note;
+      }
+    }
+    return {};
   }
 }
