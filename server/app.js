@@ -53,7 +53,17 @@ app.put('/notes/:id', function(req, res) {
         })
       });
   });
-})
+});
+
+app.delete('/notes/:id', function(req, res) {
+  Note.findOne({ _id: req.params.id }).then(function(note) {
+      note.remove().then(function() {
+        res.json({
+          message: 'Your record is deleted!.'
+        })
+      });
+  });
+});
 
 app.listen(3000, function() {
   console.log('Listening on http://localhost:3000');

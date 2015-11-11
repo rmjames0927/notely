@@ -67,8 +67,6 @@ function NotesService($http) {
 
     noteUpdatePromise.then(function(response) {
       self.replaceNote(response.data.note);
-      //self.notes.unshift(response.data.note);
-      //self.latestResult = response.data.message;
     });
     return noteUpdatePromise;
   };
@@ -81,4 +79,23 @@ function NotesService($http) {
     }
     return {};
   }
+
+  self.delete = function(note) {
+    var noteDeletePromise =  $http.delete('http://localhost:3000/notes/' + note._id);
+    noteDeletePromise.then(function(response) {
+      alert(response.data.message);
+      self.removeNote(note);
+    });
+    return noteDeletePromise;
+  };
+
+  self.removeNote = function(note) {
+    for (var i = 0; i < self.notes.length; i++) {
+      if (self.notes[i]._id === note._id) {
+        self.notes.splice(i, 1);
+      }
+    }
+    return {};
+  }
+
 }
