@@ -10,28 +10,38 @@
 
       .state('notes', {
         url: '/notes',
+        resolve: {
+          notesLoaded:  ['NotesService', function(NotesService) {
+            return NotesService.fetch();
+          }]
+        },
         templateUrl: '/notes/notes.html',
         controller: NotesController
       })
 
       .state('notes.form', {
           url: '/:noteId',
-          templateUrl: '/notes/notes-form.html'
+          templateUrl: '/notes/notes-form.html',
+          controller: NotesFormController
       });
   }
 
-  NotesController['$inject'] = ['$state', '$scope', 'NotesService'];
+  NotesController.$inject = ['$state', '$scope', 'NotesService'];
   function NotesController($state, $scope, NotesService) {
-    $scope.note = {};
+      $scope.notes = {};
+      $scope.notes = NotesService.get();
+  }
+
+  NotesFormController.$inject = ['$state', '$scope', 'NotesService']
+  function NotesFormController($state, $scope, NotesService) {
+    $scope.note = NotesService.findById($state.params.noteId);
 
     $scope.save = function () {
-                    NotesService.save($scope.note);
+                    NotesService.save($scope.note).then(function(){
+                      $scope.latestResult = NotesService.getMessage();
+                    });
+
                     $scope.note = {title:"", body_html:""};
                 };
-
-    NotesService.fetch().then(function() {
-      $scope.notes = NotesService.get();
-    });
-    $state.go('notes.form');
   }
 })();

@@ -1,9 +1,15 @@
+//Node Runttime environment for Javascript
+//Environment Variable Load [Currently to load User ID and Password]
 require('dotenv').load();
+//Environment Requires express [Minimalist Web Framework for Node.js App Server]
 var express = require('express');
 var app = express();
-var Note = require('./models/note');
-var bodyParser = require('body-parser');
 
+//Loading Note Model js
+var Note = require('./models/note');
+
+//This is body parsing middle ware for Node.js
+var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 // Allow CORS and additional headers

@@ -4,13 +4,18 @@
            name="title"
            id="note_title"
            autofocus
+           placeholder="Title of Note"
            ng-model="note.title">
   </p>
   <p>
     <textarea name="body_html"
+              placeholder="Message of Note"
               ng-model="note.body_html"></textarea>
   </p>
   <div class="form-actions">
     <input  type="submit" name="commit" value="Save" class="btn btn-default">
   </div>
+  <p>
+    {{ latestResult }}
+  </p>
 </form>
