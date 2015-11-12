@@ -11,9 +11,11 @@
   "author": "Rob James",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "html-to-text": "^1.4.0",
+    "jsonwebtoken": "^5.4.1",
     "mongoose": "^4.2.5",
     "sanitize-html": "^1.11.1"
   },
