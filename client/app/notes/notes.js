@@ -1,5 +1,4 @@
 (function (){
-  let x = 1;
 
   angular.module('notely.notes', [
     'ui.router',
