@@ -1,10 +1,12 @@
 (function (){
+  let x = 1;
+
   angular.module('notely.notes', [
     'ui.router',
     'textAngular'
   ])
   .config(notesConfig);
-
+// This is my comment
   notesConfig['$inject'] = ['$stateProvider'];
   function notesConfig($stateProvider) {
     $stateProvider
