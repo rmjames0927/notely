@@ -29,10 +29,9 @@ angular.module('notely').directive('signIn', ['$state', 'UsersService', function
     _createClass(SignInController, [{
       key: 'login',
       value: function login() {
-        // UsersService.login(this.user).then(function() {
-        //   $state.go('notes.form', { noteId: undefined });
-        UsersService.login(this.user);
-        //});
+        UsersService.login(this.user).then(function () {
+          $state.go('notes.form', { noteId: undefined });
+        });
       }
     }]);
 
@@ -89,10 +88,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 angular.module('notely').directive('userLinks', function () {
   var UserLinksController = (function () {
-    function UserLinksController(CurrentUser) {
+    function UserLinksController($state, CurrentUser, AuthToken) {
       _classCallCheck(this, UserLinksController);
 
+      this.$state = $state;
       this.CurrentUser = CurrentUser;
+      this.AuthToken = AuthToken;
     }
 
     _createClass(UserLinksController, [{
@@ -105,84 +106,28 @@ angular.module('notely').directive('userLinks', function () {
       value: function signedIn() {
         return !!this.user()._id;
       }
+    }, {
+      key: 'logout',
+      value: function logout() {
+        this.CurrentUser.clear();
+        this.AuthToken.clear();
+        this.$state.go('sign-in');
+      }
     }]);
 
     return UserLinksController;
   })();
 
-  UserLinksController.$inject = ['CurrentUser'];
+  UserLinksController.$inject = ['$state', 'CurrentUser', 'AuthToken'];
 
   return {
     scope: {},
     controller: UserLinksController,
     controllerAs: 'ctrl',
     bindToController: true,
-    template: '\n    <div class="user-links">\n       <div ng-show="ctrl.signedIn()">\n          Signed in as {{ ctrl.user().name }}\n\n          <a href="#">Logout</a>\n       </div>\n    </div>\n    '
+    template: '\n      <div class="user-links">\n        <div ng-show="ctrl.signedIn()">\n          Signed in as {{ ctrl.user().name }}\n          |\n          <a href="#" ng-click="ctrl.logout()">Logout</a>\n        </div>\n      </div>\n    '
   };
 });
-'use strict';
-
-(function () {
-
-  angular.module('notely.notes', ['ui.router', 'textAngular']).config(notesConfig);
-  // This is my comment
-  notesConfig['$inject'] = ['$stateProvider'];
-  function notesConfig($stateProvider) {
-    $stateProvider.state('notes', {
-      url: '/notes',
-      resolve: {
-        notesLoaded: ['NotesService', function (NotesService) {
-          return NotesService.fetch();
-        }]
-      },
-      templateUrl: '/notes/notes.html',
-      controller: NotesController
-    }).state('notes.form', {
-      url: '/:noteId',
-      templateUrl: '/notes/notes-form.html',
-      controller: NotesFormController
-    });
-  }
-
-  NotesController.$inject = ['$state', '$scope', 'NotesService'];
-  function NotesController($state, $scope, NotesService) {
-    $scope.notes = {};
-    $scope.notes = NotesService.get();
-  }
-
-  NotesFormController.$inject = ['$state', '$scope', 'NotesService'];
-  function NotesFormController($state, $scope, NotesService) {
-    $scope.note = NotesService.findById($state.params.noteId);
-
-    $scope.save = function () {
-      // Decide whether to call create or update...
-      if ($scope.note._id) {
-        NotesService.update($scope.note).then(function (response) {
-          $scope.note = angular.copy(response.data.note);
-        });
-      } else {
-        NotesService.create($scope.note).then(function (response) {
-          $state.go('notes.form', { noteId: response.data.note._id });
-        }).then(function () {
-          $scope.latestResult = NotesService.getMessage();
-        });
-      }
-    };
-
-    $scope['delete'] = function () {
-      NotesService['delete']($scope.note).then(function (repsonse) {
-        $state.go('notes.form', { noteId: undefined });
-      });
-    };
-
-    $scope.buttonText = function () {
-      if ($scope.note._id) {
-        return 'Save Changes';
-      }
-      return 'Save';
-    };
-  }
-})();
 'use strict';
 
 angular.module('notely').factory('AuthInterceptor', ['AuthToken', 'API_BASE', function (AuthToken, API_BASE) {
@@ -402,7 +347,14 @@ angular.module('notely').service('UsersService', ['$http', 'API_BASE', 'AuthToke
     }, {
       key: 'login',
       value: function login(user) {
-        console.log(user);
+        var loginPromise = $http.post(API_BASE + 'sessions', {
+          user: user
+        });
+        loginPromise.then(function (response) {
+          AuthToken.set(response.data.auth_token);
+          CurrentUser.set(response.data.user);
+        });
+        return loginPromise;
       }
     }]);
 
@@ -411,6 +363,69 @@ angular.module('notely').service('UsersService', ['$http', 'API_BASE', 'AuthToke
 
   return new UsersService();
 }]);
+'use strict';
+
+(function () {
+
+  angular.module('notely.notes', ['ui.router', 'textAngular']).config(notesConfig);
+  // This is my comment
+  notesConfig['$inject'] = ['$stateProvider'];
+  function notesConfig($stateProvider) {
+    $stateProvider.state('notes', {
+      url: '/notes',
+      resolve: {
+        notesLoaded: ['NotesService', function (NotesService) {
+          return NotesService.fetch();
+        }]
+      },
+      templateUrl: '/notes/notes.html',
+      controller: NotesController
+    }).state('notes.form', {
+      url: '/:noteId',
+      templateUrl: '/notes/notes-form.html',
+      controller: NotesFormController
+    });
+  }
+
+  NotesController.$inject = ['$state', '$scope', 'NotesService'];
+  function NotesController($state, $scope, NotesService) {
+    $scope.notes = {};
+    $scope.notes = NotesService.get();
+  }
+
+  NotesFormController.$inject = ['$state', '$scope', 'NotesService'];
+  function NotesFormController($state, $scope, NotesService) {
+    $scope.note = NotesService.findById($state.params.noteId);
+
+    $scope.save = function () {
+      // Decide whether to call create or update...
+      if ($scope.note._id) {
+        NotesService.update($scope.note).then(function (response) {
+          $scope.note = angular.copy(response.data.note);
+        });
+      } else {
+        NotesService.create($scope.note).then(function (response) {
+          $state.go('notes.form', { noteId: response.data.note._id });
+        }).then(function () {
+          $scope.latestResult = NotesService.getMessage();
+        });
+      }
+    };
+
+    $scope['delete'] = function () {
+      NotesService['delete']($scope.note).then(function (repsonse) {
+        $state.go('notes.form', { noteId: undefined });
+      });
+    };
+
+    $scope.buttonText = function () {
+      if ($scope.note._id) {
+        return 'Save Changes';
+      }
+      return 'Save';
+    };
+  }
+})();
 'use strict';
 
 {

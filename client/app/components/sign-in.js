@@ -5,11 +5,11 @@ angular.module('notely')
     constructor() {
       this.user = {};
     }
+    
     login() {
-      // UsersService.login(this.user).then(function() {
-      //   $state.go('notes.form', { noteId: undefined });
-      UsersService.login(this.user);
-      //});
+      UsersService.login(this.user).then(function() {
+        $state.go('notes.form', { noteId: undefined });
+      });
     }
   }
 
