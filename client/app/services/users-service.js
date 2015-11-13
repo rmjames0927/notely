@@ -12,6 +12,10 @@ angular.module('notely')
         });
         return userPromise;
       }
+
+      login(user) {
+        console.log(user);
+      }
     }
     return new UsersService();
   }]);
